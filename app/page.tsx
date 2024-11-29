@@ -1,175 +1,98 @@
-"use client";
+import { UtensilsCrossed, Clock, MapPin, Phone } from 'lucide-react';
+import MenuSection from '@/components/MenuSection';
+import HeroSlider from '@/components/HeroSlider';
 
-import Link from 'next/link';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
-
-export default function HomePage() {
-  const [openFAQs, setOpenFAQs] = useState<number[]>([]);
-
-  const toggleFAQ = (index: number) => {
-    setOpenFAQs((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-    );
-  };
-
-  const faqs = [
-    {
-      question: "What is Civix?",
-      answer:
-        "Civix is an AI-powered platform designed to streamline the proposal process for government contractors, helping them create high-quality proposals in hours instead of days.",
-    },
-    {
-      question: "How does Civix work?",
-      answer:
-        "Civix uses advanced AI algorithms to analyze your past proposals and industry best practices. It then generates a tailored first draft based on the specific requirements of your current proposal, significantly reducing the time and effort required in the initial stages of proposal writing.",
-    },
-    {
-      question: "Is Civix secure and compliant with government standards?",
-      answer:
-        "Yes, Civix is built with the highest security standards in mind. We are compliant with NIST 800-171, SOC2 Type II, CMMC, and FedRAMP, ensuring that your sensitive data is protected and meets all necessary government regulations.",
-    },
-  ];
-
+export default function Home() {
   return (
-    <>
-      {/* Sticky Header and Auth Buttons */}
-      <header className="sticky top-0 z-50 bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
-          <div className="text-2xl font-bold text-teal-600">Civix</div>
-          <div className="space-x-4">
-            <Link href="/auth">
-              <Button variant="ghost">Sign in</Button>
-            </Link>
-            <Link href="/auth">
-              <Button>Sign up</Button>
-            </Link>
+    <main>
+      {/* Hero Section */}
+      <HeroSlider />
+
+      {/* Features Section */}
+      <section className="py-16 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center space-y-4">
+              <UtensilsCrossed className="mx-auto h-12 w-12 text-primary" />
+              <h3 className="text-xl font-semibold">Özel Menü</h3>
+              <p className="text-muted-foreground">
+                Şeflerimizin özenle hazırladığı eşsiz lezzetler
+              </p>
+            </div>
+            <div className="text-center space-y-4">
+              <Clock className="mx-auto h-12 w-12 text-primary" />
+              <h3 className="text-xl font-semibold">Çalışma Saatleri</h3>
+              <p className="text-muted-foreground">
+                Her gün 11:00 - 23:00 arası hizmetinizdeyiz
+              </p>
+            </div>
+            <div className="text-center space-y-4">
+              <MapPin className="mx-auto h-12 w-12 text-primary" />
+              <h3 className="text-xl font-semibold">Konum</h3>
+              <p className="text-muted-foreground">
+                Antik Side bölgesinde tarihin en ilginç noktalarında en güzel ve eşssiz lezzetler ile birlikte....
+              </p>
+            </div>
           </div>
         </div>
-      </header>
+      </section>
 
-      <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Proposals for government contractors in hours, not days
-          </h1>
-          <p className="text-xl mb-8 text-gray-600 max-w-2xl mx-auto">
-            Civix streamlines the proposal process with AI-powered tools and templates
-          </p>
-          <Link href="/auth">
-            <Button size="lg" className="bg-black hover:bg-black text-white">
-              Get Started
-            </Button>
-          </Link>
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-center">
-            <img src="/placeholder.svg?height=30&width=100" alt="Client logo" className="mx-auto" />
-            {/* Add more logos as needed */}
+      {/* Menu Section */}
+      <MenuSection />
+
+      {/* Contact Section */}
+      <section className="py-16 bg-muted">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-4 mb-12">
+            <h2 className="text-3xl font-bold">İletişim</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Rezervasyon ve bilgi için bize ulaşın
+            </p>
           </div>
-        </section>
-
-        {/* Feature Highlight Section */}
-        <section className="bg-gray-50 py-20">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">
-              Supercharge your GovCon's proposal efforts
-            </h2>
-            <Card className="bg-teal-600 text-white">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold mb-4">
-                  Generate a complete first-draft in 60 minutes, not 60 hours
-                </h3>
-                <p className="mb-6">
-                  Our AI-powered system analyzes your past proposals and creates a tailored draft in record time.
-                </p>
-                <Button variant="secondary" className="bg-white text-teal-600 hover:bg-gray-100">
-                  Request Demo
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="py-20">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">A Powerful Suite of Features</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                "AI-Powered Draft Generation",
-                "Customizable Templates",
-                "Collaborative Editing",
-                "Version Control",
-                "Compliance Checker",
-                "Automated Formatting",
-              ].map((feature, i) => (
-                <Card key={i}>
-                  <CardHeader>
-                    <CardTitle>{feature}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>Enhance your proposal process with our {feature.toLowerCase()} feature, designed to streamline and improve your government contracting efforts.</p>
-                  </CardContent>
-                </Card>
-              ))}
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div className="flex items-center space-x-4">
+                <Phone className="h-6 w-6 text-primary flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold mb-1">Telefon</h3>
+                  <a 
+                    href="tel:+90 532 540 42 22" 
+                    className="text-primary hover:underline transition-colors"
+                  >
+                    +90 532 540 42 22
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <MapPin className="h-6 w-6 text-primary flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold mb-1">Adres</h3>
+                  <p>Side, Yasemin Sk. No: 31, 07330 Manavgat/Antalya</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <Clock className="h-6 w-6 text-primary flex-shrink-0" />
+                <div>
+                  <h3 className="font-semibold mb-1">Çalışma Saatleri</h3>
+                  <p>Her gün 11:00 - 23:00</p>
+                </div>
+              </div>
+            </div>
+            <div className="h-[400px] rounded-lg overflow-hidden">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3191.0456305954246!2d31.385943476114374!3d36.76822817486347!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c35be42150aec1%3A0x43c94373aeea9d63!2sYou%20Chill%20Lounge!5e0!3m2!1str!2str!4v1711027026095!5m2!1str!2str"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Restaurant Location"
+              />
             </div>
           </div>
-        </section>
-
-        {/* FAQ Section */}
-        <section className="bg-gray-50 py-20">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">Frequently asked questions</h2>
-            <div className="space-y-4">
-              {faqs.map((faq, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <CardTitle>
-                      <button
-                        className="flex justify-between items-center w-full text-left"
-                        onClick={() => toggleFAQ(index)}
-                        aria-expanded={openFAQs.includes(index)}
-                        aria-controls={`faq-answer-${index}`}
-                      >
-                        {faq.question}
-                        {openFAQs.includes(index) ? (
-                          <ChevronUp className="h-5 w-5" />
-                        ) : (
-                          <ChevronDown className="h-5 w-5" />
-                        )}
-                      </button>
-                    </CardTitle>
-                  </CardHeader>
-                  {openFAQs.includes(index) && (
-                    <CardContent id={`faq-answer-${index}`}>
-                      <p>{faq.answer}</p>
-                    </CardContent>
-                  )}
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-20">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-6">Unleash the Power of AI for Your Proposals</h2>
-            <div className="space-x-4">
-              <Link href="/auth">
-                <Button size="lg" className="bg-teal-600 hover:bg-teal-700 text-white">
-                  Get Started
-                </Button>
-              </Link>
-              <Button size="lg" variant="outline">
-                Book a Call
-              </Button>
-            </div>
-          </div>
-        </section>
-      </main>
-    </>
+        </div>
+      </section>
+    </main>
   );
 }

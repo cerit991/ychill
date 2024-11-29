@@ -1,37 +1,102 @@
 import { cookies } from 'next/headers';
-import { headers } from 'next/headers';
+import { randomBytes } from 'crypto';
+import db from './db';
 
-const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD = 'admin123'; // In production, use environment variables
-const AUTH_COOKIE = 'admin_session';
+// Session oluştur
+export async function createSession(userId: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const sessionId = randomBytes(32).toString('hex');
+    const expires = new Date();
+    expires.setHours(expires.getHours() + 24); // 24 saat geçerli
 
-export async function login(username: string, password: string): Promise<boolean> {
-  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-    return true;
-  }
-  return false;
-}
+    const query = `
+      INSERT INTO sessions (session_id, user_id, expires)
+      VALUES (?, ?, ?)
+    `;
 
-export async function logout() {
-  'use server';
-  cookies().delete(AUTH_COOKIE);
-}
-
-export async function checkAuth(): Promise<boolean> {
-  'use server';
-  const cookieStore = cookies();
-  const session = cookieStore.get(AUTH_COOKIE);
-  return session?.value === 'authenticated';
-}
-
-export async function setAuthCookie() {
-  'use server';
-  cookies().set({
-    name: AUTH_COOKIE,
-    value: 'authenticated',
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 60 * 60 * 24, // 24 hours
+    db.run(query, [sessionId, userId, expires.toISOString()], (err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(sessionId);
+    });
   });
+}
+
+// Session kontrolü
+export async function verifySession(sessionId: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const query = `
+      SELECT * FROM sessions 
+      WHERE session_id = ? AND expires > datetime('now')
+    `;
+
+    db.get(query, [sessionId], (err, row) => {
+      resolve(!!row);
+    });
+  });
+}
+
+// Login işlemi
+export async function login(formData: FormData): Promise<{ success: boolean; error?: string }> {
+  try {
+    const username = formData.get('username');
+    const password = formData.get('password');
+
+    // Admin bilgilerini kontrol et
+    if (
+      username === process.env.ADMIN_USERNAME &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      const sessionId = await createSession(username as string);
+      
+      // Cookie ayarla
+      cookies().set('sessionId', sessionId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 86400 // 24 saat
+      });
+
+      return { success: true };
+    }
+
+    return { 
+      success: false, 
+      error: 'Geçersiz kullanıcı adı veya şifre' 
+    };
+  } catch (error) {
+    console.error('Login error:', error);
+    return { 
+      success: false, 
+      error: 'Giriş işlemi sırasında bir hata oluştu' 
+    };
+  }
+}
+
+// Logout işlemi
+export async function logout(): Promise<void> {
+  const sessionId = cookies().get('sessionId')?.value;
+  
+  if (sessionId) {
+    await new Promise<void>((resolve) => {
+      db.run('DELETE FROM sessions WHERE session_id = ?', [sessionId], () => {
+        cookies().delete('sessionId');
+        resolve();
+      });
+    });
+  }
+}
+
+// Session kontrolü
+export async function getSession() {
+  const sessionId = cookies().get('sessionId')?.value;
+  
+  if (!sessionId) {
+    return null;
+  }
+
+  const isValid = await verifySession(sessionId);
+  return isValid ? { isAuthenticated: true } : null;
 }
